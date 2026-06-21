@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Multi Physics Lab</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#eef2f7;
+    margin:0;
+}
+
+.container{
+    width:80%;
+    margin:auto;
+    background:white;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+}
+
+h1{text-align:center;}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#007bff;
+    color:white;
+    border:none;
+    margin-top:5px;
+    cursor:pointer;
+}
+
+button:disabled{
+    background:gray;
+}
+
+#info,#lab{
+    background:#f1f1f1;
+    padding:15px;
+    margin-top:10px;
+    border-radius:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧪 Smart Multi Physics Lab</h1>
+
+<input type="text" id="search" placeholder="Type: ohm, pendulum, density...">
+<button onclick="search()">Search Practical</button>
+
+<div id="info"></div>
+
+<button id="enterBtn" style="display:none;" onclick="enterLab()">
+    🚀 Enter Lab Workspace
+</button>
+
+<div id="lab"></div>
+
+</div>
+
+<script>
+
+// ================= DATABASE =================
+const database = {
+    ohm:{
+        name:"Ohm's Law Experiment",
+        type:"electricity",
+        apparatus:["Battery","Bulb","Wire"],
+        theory:"V = IR relationship between voltage and current.",
+        instructions:"Connect circuit and observe current flow."
+    },
+
+    pendulum:{
+        name:"Simple Pendulum",
+        type:"motion",
+        apparatus:["String","Bob","Stopwatch"],
+        theory:"Used to measure gravitational acceleration.",
+        instructions:"Measure time of oscillations."
+    },
+
+    density:{
+        name:"Density Experiment",
+        type:"measurement",
+        apparatus:["Balance","Measuring Cylinder","Water"],
+        theory:"Density = mass / volume",
+        instructions:"Measure mass and volume."
+    }
+};
+
+let current=null;
+let placed=[];
+let result=0;
+function search(){
+
+    let input = document.getElementById("search").value
+        .toLowerCase()
+        .trim();
+
+    let info = document.getElementById("info");
+    let btn = document.getElementById("enterBtn");
+
+    if(!input){
+        info.innerHTML = "⚠ Andika izina rya practical";
+        btn.style.display = "none";
+        return;
+    }
+
+    let best = null;
+    let bestScore = 0;
+
+    for(let key in database){
+
+        let p = database[key];
+
+        let name = p.name.toLowerCase();
+        let type = p.type.toLowerCase();
+
+        let score = 0;
+
+        if(name === input || type === input) score += 100;
+        if(name.includes(input)) score += 50;
+        if(type.includes(input)) score += 40;
+
+        input.split(" ").forEach(w=>{
+            if(name.includes(w)) score += 10;
+            if(type.includes(w)) score += 10;
+        });
+
+        if(score > bestScore){
+            bestScore = score;
+            best = p;
+        }
+    }
+
+    if(!best){
+        info.innerHTML = "❌ Ntibibonetse. Gerageza: ohm, pendulum, density";
+        btn.style.display = "none";
+        return;
+    }
+
+    current = best;
+    placed = [];
+
+    info.innerHTML = `
+        <h2>${best.name}</h2>
+        <p><b>Ubwoko:</b> ${best.type}</p>
+
+        <h3>📘 Itegeko shingiro (theory)</h3>
+        <p>${best.theory}</p>
+
+        <h3>🧰 Ibikoresho</h3>
+        <ul>${best.apparatus.map(a=>`<li>${a}</li>`).join("")}</ul>
+
+        <h3>📌 Amabwiriza</h3>
+        <p>${best.instructions}</p>
+    `;
+
+    btn.style.display = "block";
+}
+
+// ================= ENTER LAB =================
+function enterLab(){
+
+    let lab=document.getElementById("lab");
+
+    lab.innerHTML=`
+        <h2>🧪 Lab Mode: ${current.name}</h2>
+
+        <h3>🧰 Select Apparatus</h3>
+
+        ${current.apparatus.map(a=>`
+            <button onclick="add('${a}')">➕ ${a}</button>
+        `).join("")}
+
+        <h3>📦 Setup</h3>
+        <ul id="setup"></ul>
+
+        <button id="startBtn" onclick="start()" disabled>
+            🚀 Start Experiment
+        </button>
+
+        <div id="exp"></div>
+    `;
+}
+
+// ================= ADD APPARATUS =================
+function add(item){
+
+    if(!placed.includes(item)){
+        placed.push(item);
+    }
+
+    document.getElementById("setup").innerHTML =
+        placed.map(p=>`<li>✔ ${p}</li>`).join("");
+
+    check();
+}
+
+// ================= CHECK READY =================
+function check(){
+
+    let ok=current.apparatus.every(a=>placed.includes(a));
+
+    document.getElementById("startBtn").disabled=!ok;
+}
+function floatCheck(){
+    alert("Object behavior depends on density: sink or float simulation");
+}
+function start(){
+
+    let exp=document.getElementById("exp");
+    let mode=current.type;
+
+    // clear area
+    exp.innerHTML="";
+
+    // ================= ELECTRICITY VISUAL =================
+    if(mode==="electricity"){
+
+        exp.innerHTML=`
+            <h3>⚡ Electricity Visual Lab</h3>
+
+            <div style="width:300px;height:200px;border:2px solid #000;position:relative;background:#fff;">
+
+                <div id="battery" style="position:absolute;left:20px;top:80px;">
+                    🔋 Battery
+                </div>
+
+                <div id="wire" style="position:absolute;left:120px;top:80px;">
+                    🔌 Wire
+                </div>
+
+                <div id="bulb" style="position:absolute;left:220px;top:80px;">
+                    💡 Bulb OFF
+                </div>
+
+            </div>
+
+            <button onclick="switchOn()">⚡ Switch ON</button>
+        `;
+    }
+
+    // ================= PENDULUM VISUAL =================
+    else if(mode==="motion"){
+
+        exp.innerHTML=`
+            <h3>⏱ Pendulum Visual Lab</h3>
+
+            <div style="height:200px;position:relative;border:1px solid #000;">
+
+                <div id="bob" style="
+                    width:30px;height:30px;
+                    background:red;border-radius:50%;
+                    position:absolute;left:150px;top:20px;
+                "></div>
+
+            </div>
+
+            <button onclick="startPendulum()">▶ Start Motion</button>
+        `;
+    }
+
+    // ================= DENSITY VISUAL =================
+    else if(mode==="measurement"){
+
+        exp.innerHTML=`
+            <h3>⚖ Density Visual Lab</h3>
+
+            <div style="width:200px;height:200px;border:2px solid #000;position:relative;">
+
+                <div style="
+                    width:80px;height:80px;
+                    background:blue;
+                    position:absolute;bottom:20px;left:60px;
+                ">
+                Object
+                </div>
+
+            </div>
+
+            <button onclick="floatCheck()">Check Behavior</button>
+        `;
+    }
+}
+
+// ================= CALCULATIONS =================
+function calcOhm(){
+    let V=document.getElementById("v").value;
+    let R=document.getElementById("r").value;
+    result=V/R;
+    document.getElementById("out").innerHTML="Current = "+result.toFixed(2)+" A";
+}
+
+function calcPendulum(){
+    let l=document.getElementById("l").value;
+    let t=document.getElementById("t").value;
+    result=t/l;
+    document.getElementById("out").innerHTML="T ratio = "+result.toFixed(2);
+}
+
+function calcDensity(){
+    let m=document.getElementById("m").value;
+    let v=document.getElementById("v2").value;
+    result=m/v;
+    document.getElementById("out").innerHTML="Density = "+result.toFixed(2);
+}
+function switchOn(){
+
+    document.getElementById("bulb").innerHTML="💡 Bulb ON";
+    document.getElementById("bulb").style.color="green";
+}
+function startPendulum(){
+
+    let bob=document.getElementById("bob");
+
+    let direction=1;
+    let x=150;
+
+    setInterval(()=>{
+
+        x += direction * 5;
+
+        if(x>200) direction=-1;
+        if(x<100) direction=1;
+
+        bob.style.left=x+"px";
+
+    },50);
+}
+</script>
+
+</body>
+</html>
