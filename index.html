@@ -2,343 +2,457 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Smart Multi Physics Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Virtual Lab</title>
 
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
 body{
-    font-family: Arial;
-    background:#eef2f7;
-    margin:0;
+background:#f5f7fa;
+color:#222;
+display:flex;
+height:100vh;
+transition:.3s;
+}
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+cursor:pointer;
+transition:.3s;
 }
 
-.container{
-    width:80%;
-    margin:auto;
-    background:white;
-    padding:20px;
-    margin-top:20px;
-    border-radius:10px;
+.card:hover{
+transform:translateY(-5px);
+background:#dbeafe;
 }
 
-h1{text-align:center;}
-
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
+body.dark{
+background:#111827;
+color:white;
 }
 
-button{
-    width:100%;
-    padding:10px;
-    background:#007bff;
-    color:white;
-    border:none;
-    margin-top:5px;
-    cursor:pointer;
+.sidebar{
+width:260px;
+background:#1e3a8a;
+color:white;
+padding:20px;
+overflow-y:auto;
 }
 
-button:disabled{
-    background:gray;
+.logo{
+font-size:24px;
+font-weight:bold;
+margin-bottom:20px;
 }
 
-#info,#lab{
-    background:#f1f1f1;
-    padding:15px;
-    margin-top:10px;
-    border-radius:5px;
+.menu button{
+width:100%;
+padding:12px;
+margin:6px 0;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+transition:.3s;
+}
+
+.menu button:hover{
+background:#3b82f6;
+}
+
+.main{
+flex:1;
+padding:20px;
+overflow-y:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.toggle{
+padding:10px 18px;
+border:none;
+background:#111827;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+body.dark .toggle{
+background:white;
+color:black;
+}
+
+.hero{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+color:white;
+padding:30px;
+border-radius:15px;
+margin-bottom:25px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+transition:.3s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+body.dark .card{
+background:#1f2937;
+color:white;
+}
+
+.simulation-area{
+margin-top:30px;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+body.dark .simulation-area{
+background:#1f2937;
+}
+
+canvas{
+width:100%;
+height:400px;
+background:black;
+border-radius:10px;
+}
+
+.footer{
+margin-top:30px;
+text-align:center;
+opacity:.7;
+}
+
+#tableArea{
+margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="sidebar">
+<div class="logo">⚛ Physics Lab</div>
 
-<h1>🧪 Smart Multi Physics Lab</h1>
+<div class="menu">
+<button onclick="loadExperiment('mechanics')">Mechanics</button>
+<button onclick="loadExperiment('electricity')">Electricity</button>
+<button onclick="loadExperiment('optics')">Optics</button>
+<button onclick="loadExperiment('waves')">Waves</button>
+<button onclick="loadExperiment('thermo')">Thermodynamics</button>
+<button onclick="loadExperiment('modern')">Modern Physics</button>
+<button onclick="loadExperiment('quiz')">Physics Quiz</button>
+</div>
+</div>
 
-<input type="text" id="search" placeholder="Type: ohm, pendulum, density...">
-<button onclick="search()">Search Practical</button>
+<div class="main">
 
-<div id="info"></div>
+<div class="topbar">
+<h1>Virtual Physics Laboratory</h1>
+<button class="toggle" onclick="toggleTheme()">Dark / Light</button>
+</div>
 
-<button id="enterBtn" style="display:none;" onclick="enterLab()">
-    🚀 Enter Lab Workspace
-</button>
+<div class="hero">
+<h2>Welcome to Physics Virtual Lab</h2>
+<p>Explore Mechanics, Optics, Electricity, Waves, Thermodynamics and Modern Physics through interactive simulations.</p>
+</div>
 
-<div id="lab"></div>
+<div class="card" onclick="pendulumSimulation()">
+<h3>Simple Pendulum</h3>
+<p>Determine gravity.</p>
+</div>
+
+<div class="card" onclick="hookeSimulation()">
+<h3>Hooke's Law</h3>
+<p>Spring force study.</p>
+</div>
+
+<div class="card" onclick="ohmSimulation()">
+<h3>Ohm's Law</h3>
+<p>V, I, R relation.</p>
+</div>
+
+<div class="card" onclick="lensSimulation()">
+<h3>Convex Lens</h3>
+<p>Image formation.</p>
+</div>
+
+<div class="card" onclick="waveSimulation()">
+<h3>Wave Motion</h3>
+<p>Wave simulation.</p>
+</div>
+
+<div class="card" onclick="photoelectricSimulation()">
+<h3>Photoelectric Effect</h3>
+<p>Modern physics.</p>
+</div>
+
+<div class="simulation-area">
+<h2 id="title">Experiment Display Area</h2>
+<canvas id="labCanvas"></canvas>
+<div id="tableArea"></div>
+</div>
+
+<div class="footer">
+Physics Virtual Laboratory v1.0
+</div>
 
 </div>
 
 <script>
+const canvas = document.getElementById("labCanvas");
+const ctx = canvas.getContext("2d");
 
-// ================= DATABASE =================
-const database = {
-    ohm:{
-        name:"Ohm's Law Experiment",
-        type:"electricity",
-        apparatus:["Battery","Bulb","Wire"],
-        theory:"V = IR relationship between voltage and current.",
-        instructions:"Connect circuit and observe current flow."
-    },
+canvas.width = 1000;
+canvas.height = 400;
 
-    pendulum:{
-        name:"Simple Pendulum",
-        type:"motion",
-        apparatus:["String","Bob","Stopwatch"],
-        theory:"Used to measure gravitational acceleration.",
-        instructions:"Measure time of oscillations."
-    },
-
-    density:{
-        name:"Density Experiment",
-        type:"measurement",
-        apparatus:["Balance","Measuring Cylinder","Water"],
-        theory:"Density = mass / volume",
-        instructions:"Measure mass and volume."
-    }
-};
-
-let current=null;
-let placed=[];
-let result=0;
-function search(){
-
-    let input = document.getElementById("search").value
-        .toLowerCase()
-        .trim();
-
-    let info = document.getElementById("info");
-    let btn = document.getElementById("enterBtn");
-
-    if(!input){
-        info.innerHTML = "⚠ Andika izina rya practical";
-        btn.style.display = "none";
-        return;
-    }
-
-    let best = null;
-    let bestScore = 0;
-
-    for(let key in database){
-
-        let p = database[key];
-
-        let name = p.name.toLowerCase();
-        let type = p.type.toLowerCase();
-
-        let score = 0;
-
-        if(name === input || type === input) score += 100;
-        if(name.includes(input)) score += 50;
-        if(type.includes(input)) score += 40;
-
-        input.split(" ").forEach(w=>{
-            if(name.includes(w)) score += 10;
-            if(type.includes(w)) score += 10;
-        });
-
-        if(score > bestScore){
-            bestScore = score;
-            best = p;
-        }
-    }
-
-    if(!best){
-        info.innerHTML = "❌ Ntibibonetse. Gerageza: ohm, pendulum, density";
-        btn.style.display = "none";
-        return;
-    }
-
-    current = best;
-    placed = [];
-
-    info.innerHTML = `
-        <h2>${best.name}</h2>
-        <p><b>Ubwoko:</b> ${best.type}</p>
-
-        <h3>📘 Itegeko shingiro (theory)</h3>
-        <p>${best.theory}</p>
-
-        <h3>🧰 Ibikoresho</h3>
-        <ul>${best.apparatus.map(a=>`<li>${a}</li>`).join("")}</ul>
-
-        <h3>📌 Amabwiriza</h3>
-        <p>${best.instructions}</p>
-    `;
-
-    btn.style.display = "block";
+function clearCanvas(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
-// ================= ENTER LAB =================
-function enterLab(){
-
-    let lab=document.getElementById("lab");
-
-    lab.innerHTML=`
-        <h2>🧪 Lab Mode: ${current.name}</h2>
-
-        <h3>🧰 Select Apparatus</h3>
-
-        ${current.apparatus.map(a=>`
-            <button onclick="add('${a}')">➕ ${a}</button>
-        `).join("")}
-
-        <h3>📦 Setup</h3>
-        <ul id="setup"></ul>
-
-        <button id="startBtn" onclick="start()" disabled>
-            🚀 Start Experiment
-        </button>
-
-        <div id="exp"></div>
-    `;
+function toggleTheme(){
+document.body.classList.toggle("dark");
 }
 
-// ================= ADD APPARATUS =================
-function add(item){
+/* TABLE */
+function generateHookeTable(){
+let html = `<table border="1" style="width:100%;margin-top:20px;background:white;color:black;">
+<tr><th>Mass(g)</th><th>Extension(cm)</th></tr>`;
 
-    if(!placed.includes(item)){
-        placed.push(item);
-    }
-
-    document.getElementById("setup").innerHTML =
-        placed.map(p=>`<li>✔ ${p}</li>`).join("");
-
-    check();
+for(let m=100;m<=1000;m+=100){
+let ext=(m/100)*2;
+html += `<tr><td>${m}</td><td>${ext}</td></tr>`;
 }
 
-// ================= CHECK READY =================
-function check(){
-
-    let ok=current.apparatus.every(a=>placed.includes(a));
-
-    document.getElementById("startBtn").disabled=!ok;
-}
-function floatCheck(){
-    alert("Object behavior depends on density: sink or float simulation");
-}
-function start(){
-
-    let exp=document.getElementById("exp");
-    let mode=current.type;
-
-    // clear area
-    exp.innerHTML="";
-
-    // ================= ELECTRICITY VISUAL =================
-    if(mode==="electricity"){
-
-        exp.innerHTML=`
-            <h3>⚡ Electricity Visual Lab</h3>
-
-            <div style="width:300px;height:200px;border:2px solid #000;position:relative;background:#fff;">
-
-                <div id="battery" style="position:absolute;left:20px;top:80px;">
-                    🔋 Battery
-                </div>
-
-                <div id="wire" style="position:absolute;left:120px;top:80px;">
-                    🔌 Wire
-                </div>
-
-                <div id="bulb" style="position:absolute;left:220px;top:80px;">
-                    💡 Bulb OFF
-                </div>
-
-            </div>
-
-            <button onclick="switchOn()">⚡ Switch ON</button>
-        `;
-    }
-
-    // ================= PENDULUM VISUAL =================
-    else if(mode==="motion"){
-
-        exp.innerHTML=`
-            <h3>⏱ Pendulum Visual Lab</h3>
-
-            <div style="height:200px;position:relative;border:1px solid #000;">
-
-                <div id="bob" style="
-                    width:30px;height:30px;
-                    background:red;border-radius:50%;
-                    position:absolute;left:150px;top:20px;
-                "></div>
-
-            </div>
-
-            <button onclick="startPendulum()">▶ Start Motion</button>
-        `;
-    }
-
-    // ================= DENSITY VISUAL =================
-    else if(mode==="measurement"){
-
-        exp.innerHTML=`
-            <h3>⚖ Density Visual Lab</h3>
-
-            <div style="width:200px;height:200px;border:2px solid #000;position:relative;">
-
-                <div style="
-                    width:80px;height:80px;
-                    background:blue;
-                    position:absolute;bottom:20px;left:60px;
-                ">
-                Object
-                </div>
-
-            </div>
-
-            <button onclick="floatCheck()">Check Behavior</button>
-        `;
-    }
+html += "</table>";
+document.getElementById("tableArea").innerHTML = html;
 }
 
-// ================= CALCULATIONS =================
-function calcOhm(){
-    let V=document.getElementById("v").value;
-    let R=document.getElementById("r").value;
-    result=V/R;
-    document.getElementById("out").innerHTML="Current = "+result.toFixed(2)+" A";
+/* SIMULATIONS */
+function projectileSimulation(){
+let t=0;
+function animate(){
+clearCanvas();
+ctx.fillStyle="white";
+ctx.fillText("Projectile Motion",380,40);
+
+let x=50+t*8;
+let y=350-(4*t-0.05*t*t)*10;
+
+ctx.beginPath();
+ctx.arc(x,y,12,0,Math.PI*2);
+ctx.fillStyle="yellow";
+ctx.fill();
+
+t+=0.3;
+if(x>1000)t=0;
+
+requestAnimationFrame(animate);
+}
+animate();
 }
 
-function calcPendulum(){
-    let l=document.getElementById("l").value;
-    let t=document.getElementById("t").value;
-    result=t/l;
-    document.getElementById("out").innerHTML="T ratio = "+result.toFixed(2);
+function momentumSimulation(){
+let x1=100,x2=850;
+let v1=3,v2=-3;
+
+function animate(){
+clearCanvas();
+
+ctx.fillStyle="cyan";
+ctx.fillRect(x1,180,80,80);
+
+ctx.fillStyle="orange";
+ctx.fillRect(x2,180,80,80);
+
+x1+=v1;
+x2+=v2;
+
+if(x1+80>=x2){
+[v1,v2]=[v2,v1];
 }
 
-function calcDensity(){
-    let m=document.getElementById("m").value;
-    let v=document.getElementById("v2").value;
-    result=m/v;
-    document.getElementById("out").innerHTML="Density = "+result.toFixed(2);
+requestAnimationFrame(animate);
 }
-function switchOn(){
-
-    document.getElementById("bulb").innerHTML="💡 Bulb ON";
-    document.getElementById("bulb").style.color="green";
+animate();
 }
-function startPendulum(){
 
-    let bob=document.getElementById("bob");
+function frictionSimulation(){
+let x=100;
 
-    let direction=1;
-    let x=150;
+function animate(){
+clearCanvas();
 
-    setInterval(()=>{
+ctx.fillStyle="gray";
+ctx.fillRect(0,250,1000,20);
 
-        x += direction * 5;
+ctx.fillStyle="red";
+ctx.fillRect(x,180,80,70);
 
-        if(x>200) direction=-1;
-        if(x<100) direction=1;
+x+=2;
+if(x>850)x=100;
 
-        bob.style.left=x+"px";
-
-    },50);
+requestAnimationFrame(animate);
 }
+animate();
+}
+
+function hookeSimulation(){
+function animate(){
+clearCanvas();
+
+ctx.fillStyle="white";
+ctx.fillText("Hooke's Law",350,40);
+
+requestAnimationFrame(animate);
+}
+animate();
+}
+
+function loadExperiment(type){
+
+document.getElementById("title").innerText =
+type.toUpperCase() + " EXPERIMENT";
+
+clearCanvas();
+
+switch(type){
+
+case "mechanics":
+pendulumSimulation();
+break;
+
+case "electricity":
+ohmSimulation();
+break;
+
+case "optics":
+lensSimulation();
+break;
+
+case "waves":
+waveSimulation();
+break;
+
+case "thermo":
+thermoSimulation();
+break;
+
+case "modern":
+photoelectricSimulation();
+break;
+
+case "quiz":
+physicsQuiz();
+break;
+
+default:
+clearCanvas();
+
+}
+}
+function thermoSimulation(){
+
+clearCanvas();
+
+ctx.fillStyle="orange";
+ctx.font="40px Arial";
+ctx.fillText("Thermodynamics",300,150);
+
+ctx.font="25px Arial";
+ctx.fillText("Heat Transfer Simulation",250,220);
+
+}
+function physicsQuiz(){
+
+clearCanvas();
+
+ctx.fillStyle="cyan";
+ctx.font="35px Arial";
+ctx.fillText("Physics Quiz",350,100);
+
+ctx.font="25px Arial";
+ctx.fillText("1. What is SI unit of Force?",250,180);
+
+ctx.fillText("Answer: Newton (N)",250,240);
+
+}
+
+/* SIMPLE */
+function ohmSimulation(){
+clearCanvas();
+ctx.fillStyle="lime";
+ctx.font="40px Arial";
+ctx.fillText("V = I × R",350,200);
+}
+
+function waveSimulation(){
+function animate(){
+clearCanvas();
+ctx.beginPath();
+
+for(let x=0;x<1000;x++){
+let y=200+50*Math.sin((x+Date.now()/10)/30);
+ctx.lineTo(x,y);
+}
+
+ctx.strokeStyle="cyan";
+ctx.stroke();
+
+requestAnimationFrame(animate);
+}
+animate();
+}
+
+function lensSimulation(){
+clearCanvas();
+ctx.strokeStyle="cyan";
+ctx.beginPath();
+ctx.moveTo(500,50);
+ctx.lineTo(500,350);
+ctx.stroke();
+}
+
+function photoelectricSimulation(){
+clearCanvas();
+ctx.fillStyle="yellow";
+ctx.beginPath();
+ctx.arc(200,200,40,0,Math.PI*2);
+ctx.fill();
+}
+
+/* DEFAULT */
+hookeSimulation();
 </script>
 
 </body>
