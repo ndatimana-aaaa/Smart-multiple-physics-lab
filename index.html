@@ -10,7 +10,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
+font-family:Segoe UI, sans-serif;
 }
 
 body{
@@ -20,61 +20,77 @@ display:flex;
 height:100vh;
 transition:.3s;
 }
-.card{
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-cursor:pointer;
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
-background:#dbeafe;
-}
 
 body.dark{
 background:#111827;
 color:white;
 }
 
+/* SIDEBAR */
 .sidebar{
 width:260px;
+height:100vh;
 background:#1e3a8a;
 color:white;
 padding:20px;
 overflow-y:auto;
+transition:0.3s;
+position:fixed;
+left:0;
+top:0;
+}
+
+.sidebar.hide{
+transform:translateX(-100%);
 }
 
 .logo{
+margin-bottom:15px;
+padding-bottom:10px;
+border-bottom:1px solid rgba(255,255,255,0.2);
 font-size:24px;
 font-weight:bold;
-margin-bottom:20px;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:6px;
 }
 
 .menu button{
+display:block;
 width:100%;
+text-align:left;
 padding:12px;
-margin:6px 0;
 border:none;
 border-radius:8px;
 background:#2563eb;
 color:white;
 cursor:pointer;
-transition:.3s;
+font-size:14px;
+transition:0.2s;
 }
 
 .menu button:hover{
 background:#3b82f6;
+transform:translateX(5px);
 }
 
+/* MAIN */
 .main{
 flex:1;
 padding:20px;
+margin-left:260px;
 overflow-y:auto;
 }
 
+body.dark .card{
+background:#1f2937;
+color:white;
+}
+
+/* TOPBAR */
 .topbar{
 display:flex;
 justify-content:space-between;
@@ -82,6 +98,7 @@ align-items:center;
 margin-bottom:20px;
 }
 
+/* THEME */
 .toggle{
 padding:10px 18px;
 border:none;
@@ -96,6 +113,7 @@ background:white;
 color:black;
 }
 
+/* HERO */
 .hero{
 background:linear-gradient(135deg,#2563eb,#06b6d4);
 color:white;
@@ -104,36 +122,12 @@ border-radius:15px;
 margin-bottom:25px;
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-transition:.3s;
-cursor:pointer;
-}
-
-.card:hover{
-transform:translateY(-5px);
-}
-
-body.dark .card{
-background:#1f2937;
-color:white;
-}
-
+/* SIMULATION AREA */
 .simulation-area{
 margin-top:30px;
 background:white;
 padding:20px;
 border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
 body.dark .simulation-area{
@@ -147,21 +141,33 @@ background:black;
 border-radius:10px;
 }
 
-.footer{
-margin-top:30px;
-text-align:center;
-opacity:.7;
+/* HAMBURGER */
+.hamburger{
+font-size:26px;
+background:none;
+border:none;
+cursor:pointer;
+color:inherit;
 }
 
-#tableArea{
-margin-top:15px;
+/* RESPONSIVE */
+@media (max-width: 768px){
+.main{
+margin-left:0;
+}
+.sidebar{
+position:absolute;
+z-index:1000;
+}
 }
 </style>
 </head>
 
 <body>
 
-<div class="sidebar">
+<!-- SIDEBAR -->
+<div class="sidebar hide" id="sidebar">
+
 <div class="logo">⚛ Physics Lab</div>
 
 <div class="menu">
@@ -171,60 +177,37 @@ margin-top:15px;
 <button onclick="loadExperiment('waves')">Waves</button>
 <button onclick="loadExperiment('thermo')">Thermodynamics</button>
 <button onclick="loadExperiment('modern')">Modern Physics</button>
-<button onclick="loadExperiment('quiz')">Physics Quiz</button>
-</div>
+<button onclick="loadExperiment('quiz')">Quiz</button>
+
+<hr style="margin:10px 0;opacity:0.3;">
+
+<button onclick="loadExperiment('pendulum')">Simple Pendulum</button>
+<button onclick="loadExperiment('hooke')">Hooke's Law</button>
+<button onclick="loadExperiment('ohm')">Ohm's Law</button>
+<button onclick="loadExperiment('wave')">Wave Motion</button>
+<button onclick="loadExperiment('photoelectric')">Photoelectric Effect</button>
 </div>
 
+</div>
+
+<!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
-<h1>Virtual Physics Laboratory</h1>
+<button class="hamburger" onclick="toggleMenu()">☰</button>
+<h1>Virtual Physics Lab</h1>
 <button class="toggle" onclick="toggleTheme()">Dark / Light</button>
 </div>
 
 <div class="hero">
-<h2>Welcome to Physics Virtual Lab</h2>
-<p>Explore Mechanics, Optics, Electricity, Waves, Thermodynamics and Modern Physics through interactive simulations.</p>
-</div>
-
-<div class="card" onclick="pendulumSimulation()">
-<h3>Simple Pendulum</h3>
-<p>Determine gravity.</p>
-</div>
-
-<div class="card" onclick="hookeSimulation()">
-<h3>Hooke's Law</h3>
-<p>Spring force study.</p>
-</div>
-
-<div class="card" onclick="ohmSimulation()">
-<h3>Ohm's Law</h3>
-<p>V, I, R relation.</p>
-</div>
-
-<div class="card" onclick="lensSimulation()">
-<h3>Convex Lens</h3>
-<p>Image formation.</p>
-</div>
-
-<div class="card" onclick="waveSimulation()">
-<h3>Wave Motion</h3>
-<p>Wave simulation.</p>
-</div>
-
-<div class="card" onclick="photoelectricSimulation()">
-<h3>Photoelectric Effect</h3>
-<p>Modern physics.</p>
+<h2>Welcome to Physics Lab</h2>
+<p>Interactive simulations</p>
 </div>
 
 <div class="simulation-area">
 <h2 id="title">Experiment Display Area</h2>
 <canvas id="labCanvas"></canvas>
 <div id="tableArea"></div>
-</div>
-
-<div class="footer">
-Physics Virtual Laboratory v1.0
 </div>
 
 </div>
@@ -236,179 +219,71 @@ const ctx = canvas.getContext("2d");
 canvas.width = 1000;
 canvas.height = 400;
 
+let anim;
+
 function clearCanvas(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
+function stopAnim(){
+if(anim) cancelAnimationFrame(anim);
+}
+
+/* UI */
 function toggleTheme(){
 document.body.classList.toggle("dark");
 }
 
-/* TABLE */
-function generateHookeTable(){
-let html = `<table border="1" style="width:100%;margin-top:20px;background:white;color:black;">
-<tr><th>Mass(g)</th><th>Extension(cm)</th></tr>`;
-
-for(let m=100;m<=1000;m+=100){
-let ext=(m/100)*2;
-html += `<tr><td>${m}</td><td>${ext}</td></tr>`;
+function toggleMenu(){
+document.getElementById("sidebar").classList.toggle("hide");
 }
 
-html += "</table>";
-document.getElementById("tableArea").innerHTML = html;
-}
+/* ---------- SIMULATIONS ---------- */
 
-/* SIMULATIONS */
-function projectileSimulation(){
-let t=0;
+function pendulumSimulation(){
+let angle = 1;
+
 function animate(){
 clearCanvas();
-ctx.fillStyle="white";
-ctx.fillText("Projectile Motion",380,40);
 
-let x=50+t*8;
-let y=350-(4*t-0.05*t*t)*10;
+let x0=500,y0=50,len=180;
+let x=x0+len*Math.sin(angle);
+let y=y0+len*Math.cos(angle);
 
+ctx.strokeStyle="white";
 ctx.beginPath();
-ctx.arc(x,y,12,0,Math.PI*2);
+ctx.moveTo(x0,y0);
+ctx.lineTo(x,y);
+ctx.stroke();
+
 ctx.fillStyle="yellow";
+ctx.beginPath();
+ctx.arc(x,y,20,0,Math.PI*2);
 ctx.fill();
 
-t+=0.3;
-if(x>1000)t=0;
+angle=Math.sin(Date.now()/500);
 
-requestAnimationFrame(animate);
-}
-animate();
-}
-
-function momentumSimulation(){
-let x1=100,x2=850;
-let v1=3,v2=-3;
-
-function animate(){
-clearCanvas();
-
-ctx.fillStyle="cyan";
-ctx.fillRect(x1,180,80,80);
-
-ctx.fillStyle="orange";
-ctx.fillRect(x2,180,80,80);
-
-x1+=v1;
-x2+=v2;
-
-if(x1+80>=x2){
-[v1,v2]=[v2,v1];
-}
-
-requestAnimationFrame(animate);
-}
-animate();
-}
-
-function frictionSimulation(){
-let x=100;
-
-function animate(){
-clearCanvas();
-
-ctx.fillStyle="gray";
-ctx.fillRect(0,250,1000,20);
-
-ctx.fillStyle="red";
-ctx.fillRect(x,180,80,70);
-
-x+=2;
-if(x>850)x=100;
-
-requestAnimationFrame(animate);
+anim=requestAnimationFrame(animate);
 }
 animate();
 }
 
 function hookeSimulation(){
-function animate(){
 clearCanvas();
-
 ctx.fillStyle="white";
-ctx.fillText("Hooke's Law",350,40);
+ctx.font="30px Arial";
+ctx.fillText("Hooke's Law",350,200);
 
-requestAnimationFrame(animate);
-}
-animate();
-}
+let html="<table border='1' style='width:100%;background:white;color:black'><tr><th>Mass</th><th>Extension</th></tr>";
 
-function loadExperiment(type){
-
-document.getElementById("title").innerText =
-type.toUpperCase() + " EXPERIMENT";
-
-clearCanvas();
-
-switch(type){
-
-case "mechanics":
-pendulumSimulation();
-break;
-
-case "electricity":
-ohmSimulation();
-break;
-
-case "optics":
-lensSimulation();
-break;
-
-case "waves":
-waveSimulation();
-break;
-
-case "thermo":
-thermoSimulation();
-break;
-
-case "modern":
-photoelectricSimulation();
-break;
-
-case "quiz":
-physicsQuiz();
-break;
-
-default:
-clearCanvas();
-
-}
-}
-function thermoSimulation(){
-
-clearCanvas();
-
-ctx.fillStyle="orange";
-ctx.font="40px Arial";
-ctx.fillText("Thermodynamics",300,150);
-
-ctx.font="25px Arial";
-ctx.fillText("Heat Transfer Simulation",250,220);
-
-}
-function physicsQuiz(){
-
-clearCanvas();
-
-ctx.fillStyle="cyan";
-ctx.font="35px Arial";
-ctx.fillText("Physics Quiz",350,100);
-
-ctx.font="25px Arial";
-ctx.fillText("1. What is SI unit of Force?",250,180);
-
-ctx.fillText("Answer: Newton (N)",250,240);
-
+for(let m=100;m<=1000;m+=100){
+html+=`<tr><td>${m}</td><td>${m/50}</td></tr>`;
 }
 
-/* SIMPLE */
+html+="</table>";
+document.getElementById("tableArea").innerHTML=html;
+}
+
 function ohmSimulation(){
 clearCanvas();
 ctx.fillStyle="lime";
@@ -419,6 +294,7 @@ ctx.fillText("V = I × R",350,200);
 function waveSimulation(){
 function animate(){
 clearCanvas();
+
 ctx.beginPath();
 
 for(let x=0;x<1000;x++){
@@ -429,30 +305,430 @@ ctx.lineTo(x,y);
 ctx.strokeStyle="cyan";
 ctx.stroke();
 
-requestAnimationFrame(animate);
+anim=requestAnimationFrame(animate);
 }
 animate();
-}
-
-function lensSimulation(){
-clearCanvas();
-ctx.strokeStyle="cyan";
-ctx.beginPath();
-ctx.moveTo(500,50);
-ctx.lineTo(500,350);
-ctx.stroke();
 }
 
 function photoelectricSimulation(){
 clearCanvas();
 ctx.fillStyle="yellow";
 ctx.beginPath();
-ctx.arc(200,200,40,0,Math.PI*2);
+ctx.arc(300,200,40,0,Math.PI*2);
 ctx.fill();
 }
 
-/* DEFAULT */
-hookeSimulation();
+function thermoSimulation(){
+clearCanvas();
+ctx.fillStyle="orange";
+ctx.font="30px Arial";
+ctx.fillText("Thermodynamics",300,200);
+}
+function loadExperiment(type){
+
+stopAnim();
+document.getElementById("tableArea").innerHTML="";
+document.getElementById("title").innerText=type.toUpperCase()+" EXPERIMENT";
+
+/* 🔥 NEW: close sidebar after click */
+document.getElementById("sidebar").classList.add("hide");
+
+switch(type){
+case "pendulum": pendulumSimulation(); break;
+case "hooke": hookeSimulation(); break;
+case "ohm": ohmSimulation(); break;
+case "wave": waveSimulation(); break;
+case "photoelectric": photoelectricSimulation(); break;
+case "thermo": thermoSimulation(); break;
+case "quiz": physicsQuiz(); break;
+
+case "mechanics": pendulumSimulation(); break;
+case "electricity": ohmSimulation(); break;
+case "optics": photoelectricSimulation(); break;
+case "waves": waveSimulation(); break;
+case "modern": photoelectricSimulation(); break;
+}
+}
+
+function physicsQuiz(){
+clearCanvas();
+ctx.fillStyle="cyan";
+ctx.font="25px Arial";
+ctx.fillText("What is SI unit of Force?",250,180);
+ctx.fillText("Answer: Newton",250,240);
+}
+
+/* MAIN */
+
+/* default */
+pendulumSimulation();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Virtual Lab</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+background:#f5f7fa;
+color:#222;
+display:flex;
+height:100vh;
+transition:.3s;
+}
+
+body.dark{
+background:#111827;
+color:white;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:260px;
+height:100vh;
+background:#1e3a8a;
+color:white;
+padding:20px;
+overflow-y:auto;
+transition:0.3s;
+position:fixed;
+left:0;
+top:0;
+}
+
+.sidebar.hide{
+transform:translateX(-100%);
+}
+
+.logo{
+margin-bottom:15px;
+padding-bottom:10px;
+border-bottom:1px solid rgba(255,255,255,0.2);
+font-size:24px;
+font-weight:bold;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.menu button{
+display:block;
+width:100%;
+text-align:left;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+font-size:14px;
+transition:0.2s;
+}
+
+.menu button:hover{
+background:#3b82f6;
+transform:translateX(5px);
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:20px;
+margin-left:260px;
+overflow-y:auto;
+}
+
+body.dark .card{
+background:#1f2937;
+color:white;
+}
+
+/* TOPBAR */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+/* THEME */
+.toggle{
+padding:10px 18px;
+border:none;
+background:#111827;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+body.dark .toggle{
+background:white;
+color:black;
+}
+
+/* HERO */
+.hero{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+color:white;
+padding:30px;
+border-radius:15px;
+margin-bottom:25px;
+}
+
+/* SIMULATION AREA */
+.simulation-area{
+margin-top:30px;
+background:white;
+padding:20px;
+border-radius:15px;
+}
+
+body.dark .simulation-area{
+background:#1f2937;
+}
+
+canvas{
+width:100%;
+height:400px;
+background:black;
+border-radius:10px;
+}
+
+/* HAMBURGER */
+.hamburger{
+font-size:26px;
+background:none;
+border:none;
+cursor:pointer;
+color:inherit;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px){
+.main{
+margin-left:0;
+}
+.sidebar{
+position:absolute;
+z-index:1000;
+}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar hide" id="sidebar">
+
+<div class="logo">⚛ Physics Lab</div>
+
+<div class="menu">
+<button onclick="loadExperiment('mechanics')">Mechanics</button>
+<button onclick="loadExperiment('electricity')">Electricity</button>
+<button onclick="loadExperiment('optics')">Optics</button>
+<button onclick="loadExperiment('waves')">Waves</button>
+<button onclick="loadExperiment('thermo')">Thermodynamics</button>
+<button onclick="loadExperiment('modern')">Modern Physics</button>
+<button onclick="loadExperiment('quiz')">Quiz</button>
+
+<hr style="margin:10px 0;opacity:0.3;">
+
+<button onclick="loadExperiment('pendulum')">Simple Pendulum</button>
+<button onclick="loadExperiment('hooke')">Hooke's Law</button>
+<button onclick="loadExperiment('ohm')">Ohm's Law</button>
+<button onclick="loadExperiment('wave')">Wave Motion</button>
+<button onclick="loadExperiment('photoelectric')">Photoelectric Effect</button>
+</div>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+<button class="hamburger" onclick="toggleMenu()">☰</button>
+<h1>Virtual Physics Lab</h1>
+<button class="toggle" onclick="toggleTheme()">Dark / Light</button>
+</div>
+
+<div class="hero">
+<h2>Welcome to Physics Lab</h2>
+<p>Interactive simulations</p>
+</div>
+
+<div class="simulation-area">
+<h2 id="title">Experiment Display Area</h2>
+<canvas id="labCanvas"></canvas>
+<div id="tableArea"></div>
+</div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("labCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 1000;
+canvas.height = 400;
+
+let anim;
+
+function clearCanvas(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function stopAnim(){
+if(anim) cancelAnimationFrame(anim);
+}
+
+/* UI */
+function toggleTheme(){
+document.body.classList.toggle("dark");
+}
+
+function toggleMenu(){
+document.getElementById("sidebar").classList.toggle("hide");
+}
+
+/* ---------- SIMULATIONS ---------- */
+
+function pendulumSimulation(){
+let angle = 1;
+
+function animate(){
+clearCanvas();
+
+let x0=500,y0=50,len=180;
+let x=x0+len*Math.sin(angle);
+let y=y0+len*Math.cos(angle);
+
+ctx.strokeStyle="white";
+ctx.beginPath();
+ctx.moveTo(x0,y0);
+ctx.lineTo(x,y);
+ctx.stroke();
+
+ctx.fillStyle="yellow";
+ctx.beginPath();
+ctx.arc(x,y,20,0,Math.PI*2);
+ctx.fill();
+
+angle=Math.sin(Date.now()/500);
+
+anim=requestAnimationFrame(animate);
+}
+animate();
+}
+
+function hookeSimulation(){
+clearCanvas();
+ctx.fillStyle="white";
+ctx.font="30px Arial";
+ctx.fillText("Hooke's Law",350,200);
+
+let html="<table border='1' style='width:100%;background:white;color:black'><tr><th>Mass</th><th>Extension</th></tr>";
+
+for(let m=100;m<=1000;m+=100){
+html+=`<tr><td>${m}</td><td>${m/50}</td></tr>`;
+}
+
+html+="</table>";
+document.getElementById("tableArea").innerHTML=html;
+}
+
+function ohmSimulation(){
+clearCanvas();
+ctx.fillStyle="lime";
+ctx.font="40px Arial";
+ctx.fillText("V = I × R",350,200);
+}
+
+function waveSimulation(){
+function animate(){
+clearCanvas();
+
+ctx.beginPath();
+
+for(let x=0;x<1000;x++){
+let y=200+50*Math.sin((x+Date.now()/10)/30);
+ctx.lineTo(x,y);
+}
+
+ctx.strokeStyle="cyan";
+ctx.stroke();
+
+anim=requestAnimationFrame(animate);
+}
+animate();
+}
+
+function photoelectricSimulation(){
+clearCanvas();
+ctx.fillStyle="yellow";
+ctx.beginPath();
+ctx.arc(300,200,40,0,Math.PI*2);
+ctx.fill();
+}
+
+function thermoSimulation(){
+clearCanvas();
+ctx.fillStyle="orange";
+ctx.font="30px Arial";
+ctx.fillText("Thermodynamics",300,200);
+}
+function loadExperiment(type){
+
+stopAnim();
+document.getElementById("tableArea").innerHTML="";
+document.getElementById("title").innerText=type.toUpperCase()+" EXPERIMENT";
+
+/* 🔥 NEW: close sidebar after click */
+document.getElementById("sidebar").classList.add("hide");
+
+switch(type){
+case "pendulum": pendulumSimulation(); break;
+case "hooke": hookeSimulation(); break;
+case "ohm": ohmSimulation(); break;
+case "wave": waveSimulation(); break;
+case "photoelectric": photoelectricSimulation(); break;
+case "thermo": thermoSimulation(); break;
+case "quiz": physicsQuiz(); break;
+
+case "mechanics": pendulumSimulation(); break;
+case "electricity": ohmSimulation(); break;
+case "optics": photoelectricSimulation(); break;
+case "waves": waveSimulation(); break;
+case "modern": photoelectricSimulation(); break;
+}
+}
+
+function physicsQuiz(){
+clearCanvas();
+ctx.fillStyle="cyan";
+ctx.font="25px Arial";
+ctx.fillText("What is SI unit of Force?",250,180);
+ctx.fillText("Answer: Newton",250,240);
+}
+
+/* MAIN */
+
+/* default */
+pendulumSimulation();
 </script>
 
 </body>
